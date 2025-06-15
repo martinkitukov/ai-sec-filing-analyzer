@@ -7,7 +7,6 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-      - ./data:/app/data
     environment:
       - ENVIRONMENT=development
     depends_on:
@@ -19,22 +18,18 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - REACT_APP_API_URL=http://localhost:8000
-    depends_on:
-      - backend
 
   db:
-    image: postgres:13
+    image: postgres:13-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=sec_filings
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    tmpfs:
+      - /var/lib/postgresql/data
+    # For persistent data, replace tmpfs with a named volume
+
+# To limit Docker Desktop disk image size, go to Docker Desktop > Settings > Resources > Advanced > Disk image size and set to 2GB.
 
 volumes:
   postgres_data: 
