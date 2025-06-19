@@ -30,7 +30,7 @@ This application demonstrates proficiency in key technologies and concepts relev
 - **LangChain**: Framework for developing LLM-powered applications
 - **Google Gemini**: Large Language Model for text analysis (free tier)
 - **Hugging Face Transformers**: Open-source embeddings and models
-- **Chroma**: Vector database for embeddings storage
+- **ChromaDB**: Vector database for embeddings storage (no SQL database needed)
 - **Requests**: HTTP library for SEC filing retrieval
 - **Pydantic**: Data validation and serialization
 
@@ -63,6 +63,27 @@ This application demonstrates proficiency in key technologies and concepts relev
 
 ## 🏗 Architecture
 
+### RAG Pipeline Workflow
+
+```mermaid
+graph TD
+    A["User Uploads Text"] --> B["LangChain splits"]
+    B --> C["Hugging Face embeds"]
+    C --> D["ChromaDB stores"]
+    
+    E["User Question"] --> F["Embed (HF)"]
+    F --> G["Chroma Similarity Search"]
+    G --> H["Top Chunks"]
+    
+    I["Context + Question"] --> J["Gemini"]
+    J --> K["Final Answer"]
+    
+    D -.-> G
+    H --> I
+```
+
+### Project Structure
+
 The application follows SOLID principles and clean architecture patterns:
 
 ```
@@ -73,6 +94,7 @@ The application follows SOLID principles and clean architecture patterns:
 │   │   ├── models/       # Pydantic data models
 │   │   ├── services/     # Business logic layer
 │   │   └── utils/        # Utility functions
+│   ├── chroma_db/        # Vector database storage (no SQL needed)
 │   ├── main.py           # FastAPI application entry point
 │   └── requirements.txt  # Python dependencies
 ├── frontend/
@@ -81,6 +103,27 @@ The application follows SOLID principles and clean architecture patterns:
 │   └── index.html        # Main application page
 └── docs/                 # Additional documentation
 ```
+
+### Data Architecture
+
+- **No SQL Database**: ChromaDB handles all data storage needs
+- **Vector-First**: Document chunks stored as 384-dimensional embeddings
+- **Metadata Storage**: JSON-like metadata stored alongside vectors
+- **In-Memory Processing**: Document processing happens entirely in memory
+- **Persistent Vectors**: ChromaDB provides local persistence without complex database setup
+
+### How the RAG Pipeline Works
+
+1. **Document Ingestion**: User provides SEC filing URL
+2. **Content Extraction**: Multi-format processor fetches and cleans document
+3. **Text Chunking**: LangChain splits document into 1000-character chunks with 200-char overlap
+4. **Embedding Generation**: Hugging Face Sentence Transformers convert chunks to 384-dim vectors
+5. **Vector Storage**: ChromaDB stores embeddings with metadata (no SQL database needed)
+6. **Query Processing**: User question gets embedded using same Hugging Face model
+7. **Similarity Search**: ChromaDB finds top 8 most relevant document chunks
+8. **Context Assembly**: Retrieved chunks become context for the AI prompt
+9. **AI Analysis**: Google Gemini analyzes context and generates accurate answer
+10. **Response Delivery**: User receives answer with confidence score and metadata
 
 ## 🔧 Installation & Setup
 
@@ -115,6 +158,17 @@ python -m http.server 3000
 npx serve .
 ```
 
+## 🎯 Why Vector-First Architecture?
+
+This application demonstrates modern AI-first architecture principles:
+
+- **No SQL Complexity**: Eliminates need for database schemas, migrations, and ORM layers
+- **AI-Native Storage**: ChromaDB is purpose-built for machine learning workloads
+- **Faster Development**: No database design phase - focus purely on AI functionality
+- **Better Performance**: Vector similarity search is faster than SQL joins for this use case
+- **Simpler Deployment**: One less system to configure and maintain
+- **Modern Best Practices**: Follows current trends in AI/ML application architecture
+
 ## 📚 Skills Demonstrated
 
 This project showcases the following skills relevant to Generative AI development:
@@ -139,13 +193,14 @@ This project showcases the following skills relevant to Generative AI developmen
 - [x] **LangChain**: Document loaders, text splitters, vector stores
 - [x] **Google Gemini API**: Advanced language model capabilities
 - [x] **Hugging Face**: Open-source transformer models and embeddings
-- [x] **Vector Databases**: Similarity search and retrieval
+- [x] **ChromaDB**: Vector database for similarity search and retrieval
 
 ### Data & APIs
 - [x] **HTTP APIs**: RESTful service design
 - [x] **Data Validation**: Pydantic models for type safety
 - [x] **Error Handling**: Robust error handling and logging
 - [x] **Documentation**: Automatic API documentation with FastAPI
+- [x] **Vector-First Architecture**: No SQL database complexity, pure vector storage
 
 ## 🚀 Future Enhancements
 
@@ -154,7 +209,7 @@ This project showcases the following skills relevant to Generative AI developmen
 - [ ] **Azure Deployment**: Cloud deployment on Azure Container Instances
 - [ ] **Azure Cognitive Services**: Integration with Azure OpenAI Service
 - [ ] **CI/CD Pipeline**: GitHub Actions for automated deployment
-- [ ] **SQL Database**: PostgreSQL for persistent data storage
+- [ ] **Enhanced Vector Storage**: Distributed ChromaDB or Pinecone for scale
 - [ ] **Authentication**: User management and API key handling
 - [ ] **Caching**: Redis for improved performance
 - [ ] **Monitoring**: Application insights and logging
@@ -170,18 +225,11 @@ This project showcases the following skills relevant to Generative AI developmen
 
 Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation powered by FastAPI's automatic OpenAPI generation.
 
-## 🤝 Contributing
-
-This project demonstrates professional software development practices:
-- Clean code principles
-- Comprehensive testing (coming soon)
-- Type hints and documentation
-- Error handling and logging
-- Security best practices
 
 ## 📧 Contact
 
-Built to demonstrate skills for Junior Generative AI Developer positions. This project showcases proficiency in modern AI development tools and practices, ready for mentorship and growth in a professional environment.
+email: martin.kitukov@gmail.com
+linkedin: 
 
 ---
 
