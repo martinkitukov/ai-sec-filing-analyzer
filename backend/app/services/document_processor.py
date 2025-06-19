@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 import httpx
 from bs4 import BeautifulSoup
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 from app.utils.exceptions import DocumentProcessingError
 from app.core.config import Settings

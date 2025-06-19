@@ -11,7 +11,7 @@ from typing import List, Dict, Any, Optional, Tuple
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 from sentence_transformers import SentenceTransformer
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 from app.utils.exceptions import AIServiceError
 from app.core.config import Settings

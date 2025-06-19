@@ -8,7 +8,7 @@ for SEC filing analysis and question answering.
 import logging
 from typing import Dict, Any, List, Optional
 import google.genai as genai
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 from app.utils.exceptions import AIServiceError
 from app.core.config import Settings
