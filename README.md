@@ -229,7 +229,8 @@ Once the backend is running, visit `http://localhost:8000/docs` for interactive 
 ## 📧 Contact
 
 email: martin.kitukov@gmail.com
-linkedin: 
+
+linkedin: https://www.linkedin.com/in/martin-kitukov-b205381b0/
 
 ---
 
