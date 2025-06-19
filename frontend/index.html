@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SEC Filing Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot me-2"></i>
+                AI SEC Filing Analyzer
+            </a>
+            <span class="navbar-text">
+                <small>Powered by Google Gemini + Hugging Face</small>
+            </span>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="hero-section text-center py-5 mb-4">
+                    <h1 class="display-4 text-primary">
+                        <i class="fas fa-chart-line me-3"></i>
+                        AI SEC Filing Analyzer
+                    </h1>
+                    <p class="lead">
+                        Analyze SEC filings with advanced AI technology. Ask questions and get intelligent insights 
+                        about financial documents using Google Gemini and Hugging Face embeddings.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-search me-2"></i>
+                            Analyze SEC Filing
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="analysisForm">
+                            <div class="mb-3">
+                                <label for="filingUrl" class="form-label">
+                                    <i class="fas fa-link me-1"></i>
+                                    SEC Filing URL
+                                </label>
+                                <input 
+                                    type="url" 
+                                    class="form-control" 
+                                    id="filingUrl" 
+                                    placeholder="https://www.sec.gov/Archives/edgar/data/..."
+                                    required
+                                >
+                                <div class="form-text">
+                                    Enter the URL to any SEC filing (10-K, 10-Q, 8-K, etc.)
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="question" class="form-label">
+                                    <i class="fas fa-question-circle me-1"></i>
+                                    Your Question
+                                </label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="question" 
+                                    rows="3" 
+                                    placeholder="What were the total revenues for Q3 2024?"
+                                    required
+                                ></textarea>
+                                <div class="form-text">
+                                    Ask specific questions about financial data, risk factors, or business operations
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeContext" checked>
+                                    <label class="form-check-label" for="includeContext">
+                                        Include relevant document context in response
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100" id="analyzeBtn">
+                                <i class="fas fa-magic me-2"></i>
+                                Analyze Filing with AI
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div class="row mt-4" id="loadingSection" style="display: none;">
+            <div class="col-lg-8 mx-auto">
+                <div class="card border-info">
+                    <div class="card-body text-center">
+                        <div class="spinner-border text-primary me-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span class="text-info">
+                            <strong>AI is analyzing the filing...</strong>
+                            <br>
+                            <small>This may take a few moments while we process the document</small>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="row mt-4" id="resultsSection" style="display: none;">
+            <div class="col-lg-10 mx-auto">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            AI Analysis Results
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="text-primary">Question:</h6>
+                                <p id="resultQuestion" class="bg-light p-2 rounded"></p>
+                                
+                                <h6 class="text-success">AI Answer:</h6>
+                                <div id="resultAnswer" class="answer-text"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Analysis Metadata</h6>
+                                        <p class="card-text">
+                                            <small>
+                                                <strong>Confidence:</strong> <span id="confidence"></span><br>
+                                                <strong>Processing Time:</strong> <span id="processingTime"></span><br>
+                                                <strong>AI Model:</strong> <span id="aiModel"></span>
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Section -->
+        <div class="row mt-4" id="errorSection" style="display: none;">
+            <div class="col-lg-8 mx-auto">
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Analysis Failed
+                    </h5>
+                    <p id="errorMessage"></p>
+                    <hr>
+                    <p class="mb-0">
+                        <small>Please check your inputs and try again. Make sure the SEC filing URL is valid and accessible.</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Queries Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-light">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="fas fa-examples me-2"></i>
+                            Example Questions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Financial Questions:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What were the total revenues for Q3 2024?"</li>
+                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What is the company's current cash position?"</li>
+                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"How much was spent on R&D this quarter?"</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Business Questions:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What are the main risk factors mentioned?"</li>
+                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What is this filing about?"</li>
+                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What new acquisitions were made?"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>AI SEC Filing Analyzer</h6>
+                    <p><small>Demonstrating Generative AI skills for Junior Developer positions</small></p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h6>Powered By:</h6>
+                    <p><small>
+                        <i class="fas fa-brain me-1"></i> Google Gemini LLM<br>
+                        <i class="fas fa-vector-square me-1"></i> Hugging Face Embeddings<br>
+                        <i class="fas fa-server me-1"></i> FastAPI Backend
+                    </small></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/app.js"></script>
+</body>
+</html> 
