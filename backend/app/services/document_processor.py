@@ -127,9 +127,9 @@ class DocumentProcessor:
         raw_content = await self._fetch_document(html_url)
         
         # Validate we got actual filing content, not XBRL viewer
-        if "viewing request" in raw_content.lower() or len(raw_content) < 2000:
+        if "viewing request" in raw_content.lower() and len(raw_content) < 5000:
             raise DocumentProcessingError("HTML format returned XBRL viewer or insufficient content")
-            
+        
         cleaned_text = self._parse_sec_filing(raw_content)
         metadata = self._extract_filing_metadata(raw_content, html_url)
         metadata["format"] = "HTML Direct"
@@ -156,7 +156,7 @@ class DocumentProcessor:
         raw_content = await self._fetch_document(txt_url)
         
         # Validate we got actual filing content, not error pages
-        if len(raw_content) < 1000 or "viewing request" in raw_content.lower():
+        if len(raw_content) < 1000 or ("viewing request" in raw_content.lower() and len(raw_content) < 5000):
             raise DocumentProcessingError("Text format returned insufficient content")
         
         # Text format needs minimal processing
