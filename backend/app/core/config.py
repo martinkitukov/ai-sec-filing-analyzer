@@ -48,9 +48,9 @@ class Settings(BaseSettings):
     max_response_length: int = Field(default=4000, env="MAX_RESPONSE_LENGTH")
     request_timeout: int = Field(default=60, env="REQUEST_TIMEOUT")
     
-    # Security settings
-    allowed_origins: list[str] = Field(
-        default=["http://localhost:3000", "http://127.0.0.1:3000"],
+    # Security settings  
+    allowed_origins: str = Field(
+        default="http://localhost:3000,http://127.0.0.1:3000",
         env="ALLOWED_ORIGINS"
     )
     
@@ -59,6 +59,13 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+        extra = "ignore"  # Ignore extra environment variables
+    
+    def get_allowed_origins_list(self) -> list[str]:
+        """Convert comma-separated origins string to list."""
+        if not self.allowed_origins:
+            return ["*"]
+        return [origin.strip() for origin in self.allowed_origins.split(",") if origin.strip()]
 
 
 class DevelopmentSettings(Settings):
@@ -69,7 +76,7 @@ class DevelopmentSettings(Settings):
 class ProductionSettings(Settings):
     """Production-specific settings with enhanced security."""
     debug: bool = False
-    allowed_origins: list[str] = []  # Must be explicitly set in production
+    allowed_origins: str = ""  # Must be explicitly set in production
 
 
 @lru_cache()
