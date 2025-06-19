@@ -1,15 +1,40 @@
+# FastAPI and web framework dependencies
 fastapi==0.104.1
-uvicorn==0.24.0
-sqlalchemy==2.0.23
-pydantic==2.5.2
-python-dotenv==1.0.0
-requests==2.31.0
-beautifulsoup4==4.12.2
-transformers==4.35.2
-torch==2.1.1
-faiss-cpu==1.7.4
-langchain==0.0.350
+uvicorn[standard]==0.24.0
 python-multipart==0.0.6
-aiohttp==3.9.1
-pytest==7.4.3
-httpx==0.25.2 
+python-dotenv==1.0.0
+
+# Google Gemini AI
+google-generativeai==0.3.2
+
+# Hugging Face for embeddings (simplified to avoid compilation)
+sentence-transformers>=2.2.0
+torch>=2.0.0
+
+# LangChain framework for RAG pipeline
+langchain>=0.0.350
+langchain-community>=0.0.10
+langchain-google-genai>=0.0.5
+
+# Vector database and embeddings
+chromadb>=0.4.0
+numpy>=1.24.0
+
+# Document processing and web scraping
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Data validation and serialization
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# HTTP and async support
+httpx>=0.25.0
+aiofiles>=23.2.0
+
+# Logging and utilities
+structlog>=23.2.0
+
+# CORS support for frontend integration
+fastapi-cors>=0.0.6 
