@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     
     # Google Gemini API configuration
     google_api_key: Optional[str] = Field(default=None, env="GOOGLE_API_KEY")
-    gemini_model: str = Field(default="gemini-1.5-flash", env="GEMINI_MODEL")
+    gemini_model: str = Field(default="gemini-2.5-flash", env="GEMINI_MODEL")
     
     # Hugging Face configuration
     hf_model_name: str = Field(
