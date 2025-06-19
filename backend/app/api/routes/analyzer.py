@@ -253,6 +253,89 @@ async def get_examples() -> Dict[str, Any]:
     }
 
 
+@router.get(
+    "/status",
+    summary="Get System Status",
+    description="Get comprehensive status of all AI system components"
+)
+async def get_system_status(
+    analyzer: AnalyzerService = Depends(get_analyzer_service)
+) -> Dict[str, Any]:
+    """
+    Get comprehensive status of all AI system components.
+    
+    Returns:
+        Dict containing system status and component health checks
+    """
+    try:
+        status = await analyzer.get_system_status()
+        return status
+    except Exception as e:
+        return {
+            "overall_status": "error",
+            "error": str(e),
+            "components": {}
+        }
+
+
+@router.post(
+    "/test",
+    summary="Test AI Pipeline",
+    description="Test the complete AI analysis pipeline with a sample SEC filing"
+)
+async def test_ai_pipeline(
+    analyzer: AnalyzerService = Depends(get_analyzer_service)
+) -> Dict[str, Any]:
+    """
+    Test the complete AI analysis pipeline.
+    
+    This endpoint processes a sample SEC filing to verify that all components
+    (document processing, vector embeddings, AI analysis) are working correctly.
+    
+    Returns:
+        Dict containing test results and performance metrics
+    """
+    try:
+        result = await analyzer.process_sample_filing()
+        return result
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "AI pipeline test failed"
+        }
+
+
+@router.delete(
+    "/vector-database",
+    summary="Clear Vector Database",
+    description="Clear all documents from the vector database collection"
+)
+async def clear_vector_database(
+    analyzer: AnalyzerService = Depends(get_analyzer_service)
+) -> Dict[str, Any]:
+    """
+    Clear the vector database collection.
+    
+    Useful for testing or when starting fresh with new documents.
+    
+    Returns:
+        Dict containing operation status
+    """
+    try:
+        await analyzer.clear_vector_database()
+        return {
+            "status": "success",
+            "message": "Vector database cleared successfully"
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "Failed to clear vector database"
+        }
+
+
 async def _cleanup_temporary_files(temp_files: list) -> None:
     """
     Background task to clean up temporary files.
