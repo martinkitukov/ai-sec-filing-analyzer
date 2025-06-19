@@ -97,7 +97,8 @@ class DocumentProcessor:
             
         # Check for common SEC filing paths
         valid_paths = ["/Archives/edgar/", "/ix?doc="]
-        if not any(path in parsed.path for path in valid_paths):
+        url_string = str(url).lower()
+        if not any(path.lower() in url_string for path in valid_paths):
             raise DocumentProcessingError("URL does not appear to be a SEC filing")
     
     async def _fetch_document(self, url: str) -> str:
@@ -114,11 +115,12 @@ class DocumentProcessor:
             DocumentProcessingError: If document cannot be fetched
         """
         headers = {
-            "User-Agent": "AI SEC Filing Analyzer 1.0 Educational Project (contact: developer@example.com)",
+            "User-Agent": "AI SEC Filing Analyzer v1.0 Educational Research Tool - Contact: developer@example.com",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.5",
             "Accept-Encoding": "gzip, deflate",
-            "Connection": "keep-alive"
+            "Connection": "keep-alive",
+            "From": "developer@example.com"
         }
         
         try:
