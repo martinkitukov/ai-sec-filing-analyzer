@@ -7,7 +7,7 @@ for SEC filing analysis and question answering.
 
 import logging
 from typing import Dict, Any, List, Optional
-import google.genai as genai
+import google.generativeai as genai
 from langchain_core.documents import Document
 
 from app.utils.exceptions import AIServiceError
@@ -41,8 +41,10 @@ class AIService:
             AIServiceError: If client initialization fails
         """
         try:
-            if not self.settings.google_api_key:
-                raise AIServiceError("Google API key is required but not provided")
+            if not self.settings.google_api_key or self.settings.google_api_key == "your_google_api_key_here":
+                logging.warning("Google API key not configured - AI features will be limited")
+                self.client = None
+                return
             
             # Configure the client
             genai.configure(api_key=self.settings.google_api_key)
@@ -51,7 +53,8 @@ class AIService:
             logging.info(f"AI service initialized with model: {self.settings.gemini_model}")
             
         except Exception as e:
-            raise AIServiceError(f"Failed to initialize Google Gemini client: {str(e)}")
+            logging.error(f"Failed to initialize Google Gemini client: {str(e)}")
+            self.client = None
     
     async def analyze_with_context(
         self,
@@ -76,6 +79,17 @@ class AIService:
             AIServiceError: If analysis fails
         """
         try:
+            if not self.client:
+                return {
+                    "answer": "AI service is not available. Please configure your Google API key in the .env file.",
+                    "confidence_score": 0.0,
+                    "context_used": [],
+                    "model_info": {
+                        "model": "unavailable",
+                        "provider": "Google Gemini (not configured)"
+                    }
+                }
+            
             # Prepare context from documents
             context = self._prepare_context(context_documents, filing_metadata)
             
@@ -189,6 +203,9 @@ RESPONSE:"""
             AIServiceError: If generation fails
         """
         try:
+            if not self.client:
+                raise AIServiceError("Google Gemini client not initialized")
+            
             # Generate content using Gemini
             response = self.client.generate_content(
                 prompt,
@@ -303,6 +320,14 @@ RESPONSE:"""
             Health status dictionary
         """
         try:
+            if not self.client:
+                return {
+                    "status": "not_configured",
+                    "model": self.settings.gemini_model,
+                    "provider": "Google Gemini",
+                    "issue": "API key not configured"
+                }
+            
             # Test with simple prompt
             test_prompt = "Respond with 'OK' if you can process this request."
             response = self.client.generate_content(test_prompt)
