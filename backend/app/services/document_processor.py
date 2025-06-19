@@ -43,37 +43,146 @@ class DocumentProcessor:
         
     async def fetch_and_process_filing(self, filing_url: str) -> List[Document]:
         """
-        Fetch SEC filing and process into chunks for analysis.
+        Fetch and process SEC filing from URL.
         
         Args:
-            filing_url: URL to SEC filing document
+            filing_url: URL to SEC filing
             
         Returns:
             List of processed document chunks
             
         Raises:
-            DocumentProcessingError: If document cannot be fetched or processed
+            DocumentProcessingError: If processing fails
         """
         try:
             # Validate URL
             self._validate_sec_url(filing_url)
             
-            # Fetch document content
-            raw_content = await self._fetch_document(filing_url)
+            # Try different format strategies
+            chunks = await self._try_multiple_formats(filing_url)
             
-            # Parse and clean content
-            cleaned_text = self._parse_sec_filing(raw_content)
-            
-            # Extract metadata
-            metadata = self._extract_filing_metadata(raw_content, filing_url)
-            
-            # Split into chunks
-            chunks = self._create_chunks(cleaned_text, metadata)
-            
+            if not chunks:
+                raise DocumentProcessingError("No content could be extracted from any format")
+                
             return chunks
             
         except Exception as e:
             raise DocumentProcessingError(f"Failed to process filing: {str(e)}")
+
+    async def _try_multiple_formats(self, base_url: str) -> List[Document]:
+        """
+        Try multiple SEC filing formats for best content extraction.
+        
+        Args:
+            base_url: Original filing URL
+            
+        Returns:
+            List of document chunks from best available format
+        """
+        strategies = [
+            ("HTML Direct", self._try_html_format),
+            ("Text Format", self._try_text_format), 
+            ("Original Format", self._try_original_format)
+        ]
+        
+        best_chunks = []
+        best_content_length = 0
+        
+        for strategy_name, strategy_func in strategies:
+            try:
+                chunks = await strategy_func(base_url)
+                
+                if chunks:
+                    # Calculate total content length
+                    total_length = sum(len(chunk.page_content) for chunk in chunks)
+                    
+                    if total_length > best_content_length:
+                        best_chunks = chunks
+                        best_content_length = total_length
+                        print(f"✅ Best format so far: {strategy_name} ({total_length} chars)")
+                        
+                        # If we get substantial content, we can stop
+                        if total_length > 5000:
+                            break
+                            
+            except Exception as e:
+                print(f"❌ {strategy_name} failed: {str(e)}")
+                continue
+                
+        return best_chunks
+
+    async def _try_html_format(self, url: str) -> List[Document]:
+        """Try to get HTML format of the filing."""
+        # Convert XBRL URLs to direct HTML
+        if "/ix?doc=" in url:
+            # Extract the document path and convert to direct HTML
+            doc_path = url.split("/ix?doc=")[1]
+            html_url = f"https://www.sec.gov{doc_path}"
+        else:
+            html_url = url
+            
+        raw_content = await self._fetch_document(html_url)
+        cleaned_text = self._parse_sec_filing(raw_content)
+        metadata = self._extract_filing_metadata(raw_content, html_url)
+        metadata["format"] = "HTML Direct"
+        
+        return self._create_chunks(cleaned_text, metadata)
+
+    async def _try_text_format(self, url: str) -> List[Document]:
+        """Try to get text format of the filing."""
+        # Convert to .txt format
+        if url.endswith('.htm') or url.endswith('.html'):
+            txt_url = url.rsplit('.', 1)[0] + '.txt'
+        elif "/ix?doc=" in url:
+            doc_path = url.split("/ix?doc=")[1]
+            if doc_path.endswith('.htm') or doc_path.endswith('.html'):
+                doc_path = doc_path.rsplit('.', 1)[0] + '.txt'
+            txt_url = f"https://www.sec.gov{doc_path}"
+        else:
+            txt_url = url
+            
+        raw_content = await self._fetch_document(txt_url)
+        
+        # Text format needs minimal processing
+        cleaned_text = self._clean_text(raw_content)
+        metadata = self._extract_text_filing_metadata(raw_content, txt_url)
+        metadata["format"] = "Text Format"
+        
+        return self._create_chunks(cleaned_text, metadata)
+
+    async def _try_original_format(self, url: str) -> List[Document]:
+        """Try the original URL as provided."""
+        raw_content = await self._fetch_document(url)
+        cleaned_text = self._parse_sec_filing(raw_content)
+        metadata = self._extract_filing_metadata(raw_content, url)
+        metadata["format"] = "Original"
+        
+        return self._create_chunks(cleaned_text, metadata)
+
+    def _extract_text_filing_metadata(self, content: str, url: str) -> Dict[str, str]:
+        """Extract metadata from text format SEC filing."""
+        metadata = {"source_url": url}
+        
+        try:
+            # Text format has structured headers
+            lines = content.split('\n')[:50]  # Check first 50 lines
+            
+            for line in lines:
+                line = line.strip()
+                
+                if line.startswith("COMPANY CONFORMED NAME:"):
+                    metadata["company_name"] = line.split(":", 1)[1].strip()
+                elif line.startswith("FORM TYPE:"):
+                    metadata["form_type"] = line.split(":", 1)[1].strip()
+                elif line.startswith("FILED AS OF DATE:"):
+                    metadata["filing_date"] = line.split(":", 1)[1].strip()
+                elif line.startswith("PERIOD OF REPORT:"):
+                    metadata["period_end_date"] = line.split(":", 1)[1].strip()
+                    
+        except Exception:
+            pass
+            
+        return metadata
     
     def _validate_sec_url(self, url: str) -> None:
         """
@@ -162,7 +271,11 @@ class DocumentProcessor:
         Returns:
             Cleaned text content
         """
-        # Parse HTML/XML content
+        # Parse HTML/XML content (suppress warnings for mixed content)
+        import warnings
+        from bs4 import XMLParsedAsHTMLWarning
+        warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+        
         soup = BeautifulSoup(content, 'lxml')
         
         # Remove unwanted elements
@@ -215,6 +328,11 @@ class DocumentProcessor:
         Returns:
             Metadata dictionary
         """
+        # Suppress XML warnings for metadata parsing too
+        import warnings
+        from bs4 import XMLParsedAsHTMLWarning
+        warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+        
         soup = BeautifulSoup(content, 'lxml')
         metadata = {"source_url": url}
         
