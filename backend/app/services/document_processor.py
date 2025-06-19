@@ -117,11 +117,19 @@ class DocumentProcessor:
         if "/ix?doc=" in url:
             # Extract the document path and convert to direct HTML
             doc_path = url.split("/ix?doc=")[1]
+            # Remove any query parameters
+            doc_path = doc_path.split('?')[0]
             html_url = f"https://www.sec.gov{doc_path}"
         else:
             html_url = url
             
+        print(f"🔍 Trying HTML direct URL: {html_url}")
         raw_content = await self._fetch_document(html_url)
+        
+        # Validate we got actual filing content, not XBRL viewer
+        if "viewing request" in raw_content.lower() or len(raw_content) < 2000:
+            raise DocumentProcessingError("HTML format returned XBRL viewer or insufficient content")
+            
         cleaned_text = self._parse_sec_filing(raw_content)
         metadata = self._extract_filing_metadata(raw_content, html_url)
         metadata["format"] = "HTML Direct"
@@ -130,18 +138,26 @@ class DocumentProcessor:
 
     async def _try_text_format(self, url: str) -> List[Document]:
         """Try to get text format of the filing."""
-        # Convert to .txt format
-        if url.endswith('.htm') or url.endswith('.html'):
-            txt_url = url.rsplit('.', 1)[0] + '.txt'
-        elif "/ix?doc=" in url:
+        # Convert to .txt format with better path handling
+        if "/ix?doc=" in url:
+            # Extract path from XBRL URL: /ix?doc=/Archives/edgar/...
             doc_path = url.split("/ix?doc=")[1]
+            # Remove any query parameters and convert to .txt
+            doc_path = doc_path.split('?')[0]  # Remove query params
             if doc_path.endswith('.htm') or doc_path.endswith('.html'):
                 doc_path = doc_path.rsplit('.', 1)[0] + '.txt'
             txt_url = f"https://www.sec.gov{doc_path}"
+        elif url.endswith('.htm') or url.endswith('.html'):
+            txt_url = url.rsplit('.', 1)[0] + '.txt'
         else:
             txt_url = url
             
+        print(f"🔍 Trying text format URL: {txt_url}")
         raw_content = await self._fetch_document(txt_url)
+        
+        # Validate we got actual filing content, not error pages
+        if len(raw_content) < 1000 or "viewing request" in raw_content.lower():
+            raise DocumentProcessingError("Text format returned insufficient content")
         
         # Text format needs minimal processing
         cleaned_text = self._clean_text(raw_content)
