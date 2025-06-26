@@ -9,6 +9,7 @@ from datetime import datetime
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, HttpUrl, validator
 from enum import Enum
+import uuid
 
 
 class FilingType(str, Enum):
@@ -103,14 +104,42 @@ class DocumentChunk(BaseModel):
     )
 
 
+class AnalysisStatus(str, Enum):
+    """Enumeration of analysis processing states."""
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
 class AnalysisResponse(BaseModel):
     """
-    Response model for SEC filing analysis.
+    Enhanced response model for SEC filing analysis with REST principles.
     
-    This model structures the AI analysis results with proper typing
-    and includes metadata for transparency and debugging.
+    This model structures the AI analysis results with proper typing,
+    unique identifiers, and status tracking for enterprise use.
     """
     
+    id: str = Field(
+        default_factory=lambda: str(uuid.uuid4()),
+        description="Unique identifier for this analysis"
+    )
+    
+    status: AnalysisStatus = Field(
+        default=AnalysisStatus.COMPLETED,
+        description="Current status of the analysis"
+    )
+    
+    created_at: datetime = Field(
+        default_factory=datetime.utcnow,
+        description="When the analysis was created"
+    )
+    
+    completed_at: Optional[datetime] = Field(
+        default_factory=datetime.utcnow,
+        description="When the analysis was completed"
+    )
+    
+    filing_url: str = Field(..., description="URL of the analyzed filing")
     question: str = Field(..., description="The original question asked")
     answer: str = Field(..., description="AI-generated answer to the question")
     
@@ -136,14 +165,15 @@ class AnalysisResponse(BaseModel):
         description="Time taken to process the request in milliseconds"
     )
     
-    timestamp: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Timestamp when the analysis was completed"
-    )
-    
     ai_model_info: Dict[str, str] = Field(
         default_factory=dict,
         description="Information about the AI models used"
+    )
+    
+    # REST HATEOAS links for API navigation
+    links: Dict[str, str] = Field(
+        default_factory=dict,
+        description="Related resource links"
     )
 
 
@@ -186,6 +216,35 @@ class FilingMetadata(BaseModel):
     ticker: Optional[str] = Field(default=None, description="Stock ticker symbol")
     document_size: Optional[int] = Field(default=None, description="Document size in characters")
     processed_chunks: Optional[int] = Field(default=None, description="Number of chunks processed")
+
+
+class PaginatedResponse(BaseModel):
+    """Generic paginated response model."""
+    
+    items: List[AnalysisResponse] = Field(..., description="List of analysis results")
+    total: int = Field(..., description="Total number of items")
+    limit: int = Field(..., description="Number of items per page")
+    offset: int = Field(..., description="Current offset")
+    has_more: bool = Field(..., description="Whether there are more items")
+
+
+class SystemStatus(BaseModel):
+    """Enhanced system status model."""
+    
+    overall_status: str = Field(..., description="Overall system health status")
+    components: Dict[str, Any] = Field(..., description="Individual component statuses")
+    configuration: Dict[str, Any] = Field(..., description="System configuration")
+    timestamp: datetime = Field(
+        default_factory=datetime.utcnow,
+        description="Status check timestamp"
+    )
+
+
+class FilingTypesResponse(BaseModel):
+    """Response model for supported filing types."""
+    
+    supported_types: List[Dict[str, str]] = Field(..., description="List of supported filing types")
+    total_count: int = Field(..., description="Total number of supported types")
 
 
 # Example data for API documentation
