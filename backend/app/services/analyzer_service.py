@@ -119,6 +119,7 @@ class AnalyzerService:
             processing_time_ms = int((time.time() - start_time) * 1000)
             
             response = AnalysisResponse(
+                filing_url=filing_url,  # Add the missing required field
                 question=question,
                 answer=ai_result["answer"],
                 confidence_score=ai_result["confidence_score"],
@@ -131,7 +132,7 @@ class AnalyzerService:
                     "chunks_processed": len(documents),
                     "chunks_used_for_context": len(context_documents)
                 },
-                context_sources=ai_result.get("context_used", []) if include_context else [],
+                relevant_chunks=ai_result.get("context_used", []) if include_context else [],
                 processing_time_ms=processing_time_ms,
                 ai_model_info={
                     "llm": ai_result["model_info"]["model"],
