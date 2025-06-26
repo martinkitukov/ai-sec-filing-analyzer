@@ -156,10 +156,12 @@ class VectorManager:
                 normalize_embeddings=True
             ).tolist()[0]
             
-            # Perform search
+            # Perform search with more results to allow for re-ranking
+            search_k = min(top_k * 3, 50)  # Get more results for better selection
+            
             results = self.collection.query(
                 query_embeddings=[query_embedding],
-                n_results=top_k,
+                n_results=search_k,
                 where=filter_metadata
             )
             
@@ -174,20 +176,58 @@ class VectorManager:
                         metadata=results['metadatas'][0][i] if results['metadatas'] else {}
                     )
                     
-                    # Calculate similarity score (ChromaDB returns distances, convert to similarity)
+                    # Calculate base similarity score
                     distance = results['distances'][0][i] if results['distances'] else 1.0
                     similarity_score = 1.0 - distance  # Convert distance to similarity
                     
-                    documents_with_scores.append((doc, similarity_score))
+                    # Apply content-based boosting for financial queries
+                    boosted_score = self._apply_content_boosting(doc, query, similarity_score)
+                    
+                    documents_with_scores.append((doc, boosted_score))
             
-            # Sort by similarity score (highest first)
+            # Sort by boosted similarity score (highest first)
             documents_with_scores.sort(key=lambda x: x[1], reverse=True)
             
-            logging.info(f"Found {len(documents_with_scores)} relevant documents for query")
-            return documents_with_scores
+            # Return top_k results
+            final_results = documents_with_scores[:top_k]
+            
+            logging.info(f"Found {len(final_results)} relevant documents for query (boosted)")
+            return final_results
             
         except Exception as e:
             raise AIServiceError(f"Failed to perform similarity search: {str(e)}")
+    
+    def _apply_content_boosting(self, doc: Document, query: str, base_score: float) -> float:
+        """Apply content-based boosting to prioritize financial content."""
+        boosted_score = base_score
+        query_lower = query.lower()
+        content_lower = doc.page_content.lower()
+        chunk_type = doc.metadata.get('chunk_type', 'general')
+        
+        # Boost for high priority financial content
+        if chunk_type == 'high_priority_financial':
+            boosted_score += 0.3
+        elif chunk_type == 'financial':
+            boosted_score += 0.2
+        
+        # Boost for Q1 2025 specific content when asking about 2025
+        if any(term in query_lower for term in ['2025', 'q1', 'first quarter']):
+            if any(term in content_lower for term in ['q1 2025', 'first quarter 2025', 'march 31, 2025']):
+                boosted_score += 0.25
+        
+        # Boost for specific financial metrics when mentioned in query
+        financial_metrics = ['net income', 'revenue', 'earnings', 'income', 'profit', 'loss']
+        for metric in financial_metrics:
+            if metric in query_lower and metric in content_lower:
+                boosted_score += 0.15
+                break
+        
+        # Boost for content with actual financial numbers
+        if '$' in doc.page_content and any(term in content_lower for term in ['million', 'billion']):
+            boosted_score += 0.1
+        
+        # Cap the score at 1.0
+        return min(boosted_score, 1.0)
     
     async def get_collection_stats(self) -> Dict[str, Any]:
         """
