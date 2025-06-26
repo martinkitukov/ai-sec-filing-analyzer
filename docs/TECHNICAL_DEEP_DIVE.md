@@ -311,6 +311,75 @@ async def test_full_analysis_pipeline():
 - **Advanced Analytics**: Query pattern analysis and optimization
 - **Enterprise Integration**: SSO, role-based access, and audit logging
 
+### 📡 **API Design & Versioning Strategy**
+
+#### **RESTful Design Principles**
+This API follows modern REST design principles:
+
+```python
+# Resource-oriented URLs (not action-oriented)
+POST   /api/v1/analyses           # ✅ Creates an analysis resource
+GET    /api/v1/analyses/{id}      # ✅ Retrieves specific analysis
+GET    /api/v1/filings/types      # ✅ Retrieves filing type resources
+
+# vs. Action-oriented (what we avoided)
+POST   /api/v1/analyze            # ❌ Action in URL
+GET    /api/v1/get-filings        # ❌ Action verb in URL
+```
+
+#### **HTTP Status Code Usage**
+- **201 Created**: For successful resource creation (`POST /analyses`)
+- **200 OK**: For successful data retrieval (`GET` endpoints)
+- **404 Not Found**: For non-existent resources or endpoints
+- **405 Method Not Allowed**: For unsupported HTTP methods
+- **422 Unprocessable Entity**: For validation errors
+- **500 Internal Server Error**: For system failures
+
+#### **API Versioning Strategy Explained**
+
+**What We Have**: `api/v1/` namespace for current endpoints
+
+**True API Versioning** would involve:
+```
+api/v1/analyses    # Original implementation
+api/v2/analyses    # New implementation (breaking changes)
+api/v3/analyses    # Another iteration
+```
+
+**Why v1 Only?**
+- **Portfolio Focus**: Demonstrates current best practices rather than evolution
+- **Clean Documentation**: Swagger UI shows only current, recommended endpoints
+- **Real-world Context**: Most APIs start with v1 and only version when making breaking changes
+
+**When You'd Create v2**:
+- Breaking changes to request/response format
+- Fundamental architectural changes
+- Different authentication methods
+- Major business logic changes
+
+#### **Response Format Consistency**
+All endpoints follow the same patterns:
+```json
+{
+  "success_response": {
+    "data": "...",
+    "metadata": "...",
+    "links": "..." // HATEOAS
+  },
+  "error_response": {
+    "error": "...",
+    "details": "...",
+    "request_id": "..."
+  }
+}
+```
+
+#### **API Documentation**
+- **Auto-generated**: OpenAPI/Swagger from FastAPI decorators
+- **Interactive**: Test endpoints directly from `/docs`
+- **Examples**: Real request/response examples in documentation
+- **Type Safety**: Pydantic models ensure request/response validation
+
 ---
 
 *This technical architecture demonstrates enterprise-grade design patterns while maintaining simplicity for rapid development and iteration. The modular design supports both current demo requirements and future production scaling needs.* 
