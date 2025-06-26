@@ -214,7 +214,7 @@ class SECAnalyzer {
      * Make API call to analyze document
      */
     async analyzeDocument(data) {
-        const response = await fetch(`${this.apiBaseUrl}/analyze`, {
+        const response = await fetch(`${this.apiBaseUrl}/analyses`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -378,12 +378,12 @@ class SECAnalyzer {
      */
     async loadExampleQuestions() {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/examples`);
+            const response = await fetch(`${this.apiBaseUrl}/examples/queries`);
             if (response.ok) {
                 const data = await response.json();
                 // Example questions are already in the HTML, but this could be used
                 // to dynamically load them from the backend
-                console.log('Example questions loaded:', data.example_questions);
+                console.log('Example questions loaded:', data);
             }
         } catch (error) {
             console.warn('Could not load example questions:', error);
