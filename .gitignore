@@ -192,3 +192,16 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# ChromaDB Vector Database
+#  ChromaDB creates local vector database files that should not be committed
+#  These are generated data files that vary between environments
+backend/chroma_db/
+chroma_db/
+*.chroma
+chroma.sqlite3
+# ChromaDB collection directories (UUID-named)
+**/chroma_db/**/
+# ChromaDB binary files
+*.bin
+!requirements.txt
