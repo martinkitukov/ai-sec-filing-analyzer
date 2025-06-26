@@ -149,7 +149,7 @@ class AIService:
         max_response_length: Optional[int] = None
     ) -> str:
         """
-        Create optimized prompt for SEC filing analysis.
+        Create optimized prompt for SEC filing analysis with enhanced length control.
         
         Args:
             question: User's question
@@ -159,31 +159,64 @@ class AIService:
         Returns:
             Formatted prompt
         """
+        # Detect if user wants a very short response
+        is_short_request = any(phrase in question.lower() for phrase in [
+            "in 1 sentence", "in one sentence", "briefly", "summarize in", 
+            "what is this about", "concisely", "in a sentence"
+        ])
+        
         length_instruction = ""
-        if max_response_length:
+        if is_short_request:
+            length_instruction = "CRITICAL: Provide EXACTLY ONE SENTENCE as requested. Do not exceed one sentence. "
+        elif max_response_length:
             length_instruction = f"Keep your response under {max_response_length} characters. "
         
+        # Check if this appears to be a financial data question
+        is_financial_question = any(term in question.lower() for term in [
+            'revenue', 'income', 'profit', 'loss', 'assets', 'liabilities', 'cash', 'debt',
+            'earnings', 'sales', 'net income', 'total assets', 'equity', 'balance sheet',
+            'financial', 'q1', 'quarter', '2024', '2025', 'fiscal', 'million', 'billion'
+        ])
+        
+        financial_instructions = ""
+        if is_financial_question:
+            financial_instructions = """
+CRITICAL FINANCIAL DATA ANALYSIS INSTRUCTIONS:
+- PRIORITIZE 2025 DATA OVER 2024 OR ANY OLDER DATA
+- When extracting financial numbers from XBRL/HTML, focus on elements with recent dates
+- Look for contextref attributes containing "2025", "Q1 2025", "2025-03-31", or similar recent periods
+- If you see both 2024 and 2025 data for the same metric, ALWAYS choose 2025
+- Pay special attention to ix:nonfraction tags and similar XBRL elements with current period contexts
+- Extract exact financial values with proper scale (millions, billions) when available
+- Include the time period/context for any financial figures you report
+"""
+        
+        # Enhanced prompt with better financial context understanding
         prompt = f"""You are an expert financial analyst specializing in SEC filings. You help investors and analysts understand complex financial documents by providing accurate, detailed, and insightful analysis.
 
-CONTEXT:
+DOCUMENT CONTEXT:
 {context}
 
-QUESTION: {question}
+USER QUESTION: {question}
 
-INSTRUCTIONS:
-1. Analyze the provided SEC filing excerpts carefully
-2. Answer the question based ONLY on the information provided in the context
-3. If the information isn't available in the context, clearly state that
-4. Provide specific details, numbers, and quotes when available
-5. Be precise and professional in your response
-6. {length_instruction}Structure your response clearly with relevant headings if needed
+ANALYSIS INSTRUCTIONS:
+1. {length_instruction}
+2. Analyze the provided SEC filing information carefully{financial_instructions}
+3. Answer based ONLY on the information provided in the context
+4. If the information isn't available in the context, clearly state that
+5. For financial documents, focus on business operations, financial metrics, and corporate purpose
+6. Provide specific details, numbers, and quotes when available
+7. Be precise and professional in your response
 
 IMPORTANT GUIDELINES:
 - Only use information from the provided context
+- For XBRL/structured data: Extract financial numbers intelligently from the HTML/XBRL structure
+- When you see HTML content with XBRL tags, parse them to find the actual financial values
 - Quote specific excerpts when making claims
-- If asking about financial numbers, provide exact figures when available
-- Explain financial terminology when necessary
+- If asking about financial numbers, provide exact figures when available with their time periods
+- If this is a summary request, prioritize the main business purpose and document type
 - Highlight any limitations in the available data
+- When analyzing raw HTML/XBRL content, focus on extracting meaningful financial data rather than describing the technical structure
 
 RESPONSE:"""
         
@@ -243,13 +276,18 @@ RESPONSE:"""
         # Calculate confidence score based on response characteristics
         confidence_score = self._calculate_confidence_score(response_text, context_docs)
         
-        # Extract context information
+        # Extract context information in DocumentChunk format
         context_info = []
-        for doc in context_docs[:5]:  # Top 5 for response
+        for i, doc in enumerate(context_docs[:5]):  # Top 5 for response
             context_info.append({
-                "chunk_id": doc.metadata.get("chunk_id", 0),
-                "source": doc.metadata.get("source_url", ""),
-                "relevance": "high"  # Could be enhanced with scoring
+                "content": doc.page_content[:500] + "..." if len(doc.page_content) > 500 else doc.page_content,
+                "chunk_id": str(doc.metadata.get("chunk_id", f"chunk_{i}")),
+                "similarity_score": 0.8,  # Default high relevance
+                "page_number": doc.metadata.get("page_number"),
+                "metadata": {
+                    "source": doc.metadata.get("source_url", ""),
+                    "relevance": "high"
+                }
             })
         
         return {
