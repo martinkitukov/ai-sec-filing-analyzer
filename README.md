@@ -2,6 +2,22 @@
 
 A full-stack web application that demonstrates Generative AI capabilities for analyzing SEC filings, built to showcase skills for Junior Generative AI Developer positions.
 
+## 🚀 **Try It Now**
+
+**Need SEC filing URLs?** Visit the official SEC EDGAR database:
+👉 **https://www.sec.gov/search-filings**
+
+**Quick Start:**
+1. Search for any public company (e.g., "Apple", "Microsoft", "Tesla")
+2. Find a recent 10-K, 10-Q, or 8-K filing
+3. Copy the filing URL 
+4. Paste it into this application with your question!
+
+**💡 Pro Tips:**
+- **10-K**: Annual reports (great for comprehensive analysis)
+- **10-Q**: Quarterly reports (perfect for recent financial data)
+- **8-K**: Current reports (ideal for specific events/announcements)
+
 ## 🎯 Purpose
 
 This application demonstrates proficiency in key technologies and concepts relevant to Generative AI development:
@@ -149,6 +165,13 @@ export GOOGLE_API_KEY="your-google-ai-key-here"  # On Windows: set GOOGLE_API_KE
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
+**🚀 First Run:** The application will automatically:
+- Create the `chroma_db/` directory and vector database files
+- Download the Hugging Face embedding model (~90MB)
+- Initialize all AI components
+
+**⚡ Subsequent Runs:** Everything loads faster as models and database are cached locally.
+
 ### Frontend Setup
 ```bash
 cd frontend
@@ -157,6 +180,69 @@ python -m http.server 3000
 # or
 npx serve .
 ```
+
+## 📖 **How to Use the Application**
+
+### Step 1: Find a SEC Filing
+1. **Go to SEC EDGAR**: https://www.sec.gov/search-filings
+2. **Search** for any public company (Apple, Tesla, Microsoft, etc.)
+3. **Filter** by filing type:
+   - **10-K**: Annual comprehensive reports
+   - **10-Q**: Quarterly financial reports  
+   - **8-K**: Current event reports
+4. **Click** on any recent filing
+5. **Copy** the URL from your browser
+
+### Step 2: Analyze with AI
+1. **Open** the application at `http://localhost:3000`
+2. **Paste** the SEC filing URL into the input field
+3. **Ask** your question in plain English:
+   - *"What were the total revenues for Q3 2024?"*
+   - *"What are the main risk factors?"*
+   - *"How much cash does the company have?"*
+   - *"What is the company's outlook for next year?"*
+4. **Submit** and get intelligent analysis in seconds!
+
+### Step 3: Explore the Results
+- **AI Analysis**: Get detailed, sourced answers
+- **Confidence Score**: See how confident the AI is
+- **Source Attribution**: Know exactly where information came from
+- **Filing Metadata**: Company name, filing type, and dates
+
+### 🎯 **Best Questions to Ask**
+- **Financial Metrics**: *"What were the revenues, profits, and cash flow?"*
+- **Risk Analysis**: *"What risks does management identify?"*  
+- **Strategy**: *"What is the company's strategy for growth?"*
+- **Recent Changes**: *"What major events happened this quarter?"*
+- **Comparisons**: *"How did this quarter compare to last year?"*
+
+### 💡 **Example Workflow**
+
+Here is a complete walkthrough from finding a filing on SEC.gov to getting an AI-powered analysis.
+
+**Step 1: Search for a company on the SEC EDGAR database.**
+*Navigate to https://www.sec.gov/search-filings and search for a public company.*
+![Step 1: Search for a company](docs/screenshots/sec-company-search.png)
+
+**Step 2: Find a recent 10-K or 10-Q filing.**
+*From the search results, locate the filing documents for the company.*
+![Step 2: Find a recent filing](docs/screenshots/company-fillings.png)
+
+**Step 3: Open the filing document.**
+*Click on the filing to open it. Look for the HTML document link.*
+![Step 3: Open the filing document](docs/screenshots/filling.png)
+
+**Step 4: Copy the URL of the filing.**
+*Once the filing is open in your browser, copy the full URL from the address bar.*
+![Step 4: Copy the filing URL](docs/screenshots/filling-data.png)
+
+**Step 5: Paste the URL and ask your question.**
+*Paste the URL into the application, type your question in plain English, and click "Analyze".*
+![Step 5: Paste the URL and ask a question](docs/screenshots/insert-link-and-question.png)
+
+**Step 6: Get an instant AI-powered response.**
+*The system will process the document and provide a detailed, contextual answer to your question.*
+![Step 6: Get an AI response](docs/screenshots/ai-response.png)
 
 ## 🎯 Why Vector-First Architecture?
 
@@ -224,6 +310,39 @@ This project showcases the following skills relevant to Generative AI developmen
 ## 📄 API Documentation
 
 Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation powered by FastAPI's automatic OpenAPI generation.
+
+### 🎯 **API Design**
+
+This project implements **modern RESTful API design principles**:
+
+#### **Core API Endpoints**
+```
+POST   /api/v1/analyses           # Create new SEC filing analysis
+GET    /api/v1/analyses           # List all analyses (with pagination)
+GET    /api/v1/analyses/{id}      # Get specific analysis by ID
+GET    /api/v1/system/status      # Comprehensive system health check
+GET    /api/v1/filings/types      # List supported SEC filing types
+GET    /api/v1/examples/queries   # Example questions and usage patterns
+```
+
+#### **REST Design Principles Demonstrated**
+- **Resource-Oriented**: URLs represent resources, not actions
+- **HTTP Status Codes**: 201 for creation, 404 for not found, etc.
+- **Proper HTTP Methods**: POST for creation, GET for retrieval, DELETE for removal
+- **Consistent Response Format**: All endpoints follow the same error/success patterns
+- **API Documentation**: Auto-generated OpenAPI/Swagger documentation
+
+### 🗂️ **Data Storage Architecture**
+
+**ChromaDB (Vector Database):**
+- ✅ Document chunks and embeddings are persisted
+- ✅ Automatically created when first used (not in Git)
+- ✅ Each user builds their own clean database
+
+**Analysis Records:**
+- ⚠️ **Demo Mode**: Analysis IDs exist only in API responses (not persisted)
+- 🏭 **Production**: Would require PostgreSQL/MongoDB for analysis history
+- 🎯 **Portfolio Focus**: Showcases AI/ML capabilities over CRUD operations
 
 
 ## 📧 Contact
