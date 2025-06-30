@@ -1,0 +1,56 @@
+apiVersion: 2021-02-01
+location: eastus
+name: sec-analyzer-app
+properties:
+  kind: app
+  reserved: true
+  sku:
+    name: P1v2
+    tier: PremiumV2
+  siteConfig:
+    linuxFxVersion: DOCKER|sec-analyzer:latest
+    appSettings:
+    - name: ENVIRONMENT
+      value: "production"
+    - name: GOOGLE_API_KEY
+      value: "${GOOGLE_API_KEY}"
+    - name: ALLOWED_ORIGINS
+      value: "https://your-domain.com"
+    - name: VECTOR_DB_PATH
+      value: "/app/chroma_db"
+    - name: CHUNK_SIZE
+      value: "1000"
+    - name: CHUNK_OVERLAP
+      value: "200"
+    - name: MAX_CHUNKS
+      value: "100"
+    - name: REQUEST_TIMEOUT
+      value: "60"
+    - name: GEMINI_MODEL
+      value: "gemini-2.5-flash"
+    - name: HF_MODEL_NAME
+      value: "sentence-transformers/all-MiniLM-L6-v2"
+    - name: WEBSITES_PORT
+      value: "8000"
+    - name: DOCKER_REGISTRY_SERVER_URL
+      value: "${ACR_URL}"
+    - name: DOCKER_REGISTRY_SERVER_USERNAME
+      value: "${ACR_USERNAME}"
+    - name: DOCKER_REGISTRY_SERVER_PASSWORD
+      value: "${ACR_PASSWORD}"
+    - name: WEBSITES_ENABLE_APP_SERVICE_STORAGE
+      value: "true"
+    alwaysOn: true
+    healthCheckPath: /health
+    cors:
+      allowedOrigins:
+      - "https://your-domain.com"
+      - "https://www.your-domain.com"
+    applicationStack:
+      docker:
+        registryUrl: "${ACR_URL}"
+        image: sec-analyzer:latest
+  tags:
+    environment: production
+    application: sec-analyzer
+    version: "1.0.0" 

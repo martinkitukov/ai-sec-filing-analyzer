@@ -1,0 +1,83 @@
+apiVersion: 2021-10-01
+location: eastus
+name: sec-analyzer-aci
+properties:
+  containers:
+  - name: sec-analyzer
+    properties:
+      image: sec-analyzer:latest
+      resources:
+        requests:
+          memoryInGB: 2
+          cpu: 1
+        limits:
+          memoryInGB: 4
+          cpu: 2
+      ports:
+      - port: 8000
+        protocol: TCP
+      environmentVariables:
+      - name: ENVIRONMENT
+        value: "production"
+      - name: GOOGLE_API_KEY
+        secureValue: "${GOOGLE_API_KEY}"
+      - name: ALLOWED_ORIGINS
+        value: "https://your-domain.com"
+      - name: VECTOR_DB_PATH
+        value: "/app/chroma_db"
+      - name: CHUNK_SIZE
+        value: "1000"
+      - name: CHUNK_OVERLAP
+        value: "200"
+      - name: MAX_CHUNKS
+        value: "100"
+      - name: REQUEST_TIMEOUT
+        value: "60"
+      - name: GEMINI_MODEL
+        value: "gemini-2.5-flash"
+      - name: HF_MODEL_NAME
+        value: "sentence-transformers/all-MiniLM-L6-v2"
+      volumeMounts:
+      - name: chroma-data
+        mountPath: /app/chroma_db
+      - name: logs
+        mountPath: /app/logs
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 8000
+        initialDelaySeconds: 60
+        periodSeconds: 30
+        timeoutSeconds: 10
+        failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 8000
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+  osType: Linux
+  restartPolicy: Always
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: TCP
+      port: 8000
+    dnsNameLabel: sec-analyzer-aci
+  volumes:
+  - name: chroma-data
+    azureFile:
+      shareName: chromadb
+      storageAccountName: secanalyzerstorage
+      storageAccountKey: "${STORAGE_ACCOUNT_KEY}"
+  - name: logs
+    azureFile:
+      shareName: logs
+      storageAccountName: secanalyzerstorage
+      storageAccountKey: "${STORAGE_ACCOUNT_KEY}"
+  tags:
+    environment: production
+    application: sec-analyzer
+    version: "1.0.0" 
