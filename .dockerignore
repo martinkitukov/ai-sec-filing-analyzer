@@ -1,0 +1,106 @@
+# Git and version control
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+docs/
+*.md
+README.md
+LICENSE
+
+# Development files
+.env
+.env.local
+.env.*.local
+*.log
+logs/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Node.js (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test files
+test_*.json
+*.test.py
+tests/
+
+# Deployment files
+deploy/
+deploy.bat
+deploy.sh
+
+# ChromaDB data (will be ephemeral)
+chroma_db/
+
+# SSL certificates
+ssl/
+*.pem
+*.key
+*.crt
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Archive files
+*.tar
+*.tar.gz
+*.zip
+*.rar
+
+# Large model files (will be downloaded at runtime)
+*.bin
+*.safetensors
+*.ckpt 
