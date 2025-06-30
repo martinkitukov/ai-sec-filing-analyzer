@@ -33,8 +33,9 @@ class SECAnalyzer {
 
         // Example question clicks
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.list-unstyled li')) {
-                this.fillExampleQuestion(e.target.closest('li').textContent);
+            if (e.target.classList.contains('example-question')) {
+                const question = e.target.getAttribute('data-question').trim();
+                this.fillExampleQuestion(question);
             }
         });
 
@@ -363,14 +364,22 @@ class SECAnalyzer {
      * Fill example question into the form
      */
     fillExampleQuestion(questionText) {
-        const cleanQuestion = questionText.replace(/^[^\w]*"?/, '').replace(/"?$/, '');
+        // Clean up the question text and ensure no extra spaces
+        const cleanQuestion = questionText.trim().replace(/\s+/g, ' ');
         document.getElementById('question').value = cleanQuestion;
+        
+        // Add visual feedback
+        const questionField = document.getElementById('question');
+        questionField.classList.add('border-success');
+        setTimeout(() => {
+            questionField.classList.remove('border-success');
+        }, 1000);
         
         // Scroll to form
         this.form.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
         // Focus on question field
-        document.getElementById('question').focus();
+        questionField.focus();
     }
 
     /**
