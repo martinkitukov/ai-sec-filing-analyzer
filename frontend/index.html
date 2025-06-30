@@ -66,7 +66,10 @@
                                     required
                                 >
                                 <div class="form-text">
-                                    Enter the URL to any SEC filing (10-K, 10-Q, 8-K, etc.)
+                                    Enter the URL to any SEC filing (10-K, 10-Q, 8-K, etc.) 
+                                    <a href="https://www.sec.gov/search-filings" target="_blank" class="text-decoration-none">
+                                        <i class="fas fa-external-link-alt me-1"></i>Find SEC filings here
+                                    </a>
                                 </div>
                             </div>
 
@@ -180,32 +183,122 @@
             </div>
         </div>
 
-        <!-- Example Queries Section -->
+        <!-- Quick Start Section -->
         <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-info">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-rocket me-2"></i>
+                            Quick Start - Try These Popular Companies
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Click any company below to open their recent SEC filings, then copy a filing URL to analyze:</p>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mb-2">
+                                <a href="https://www.sec.gov/edgar/browse/?CIK=1318605&owner=exclude" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-car me-1"></i> Tesla (TSLA)
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-2">
+                                <a href="https://www.sec.gov/edgar/browse/?CIK=320193&owner=exclude" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fab fa-apple me-1"></i> Apple (AAPL)
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-2">
+                                <a href="https://www.sec.gov/edgar/browse/?CIK=789019&owner=exclude" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fab fa-microsoft me-1"></i> Microsoft (MSFT)
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-2">
+                                <a href="https://www.sec.gov/edgar/browse/?CIK=1018724&owner=exclude" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fab fa-amazon me-1"></i> Amazon (AMZN)
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <a href="https://www.sec.gov/search-filings" target="_blank" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>Search All SEC Filings
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Queries Section -->
+        <div class="row mt-4">
             <div class="col-12">
                 <div class="card border-light">
                     <div class="card-header bg-light">
                         <h5 class="mb-0">
-                            <i class="fas fa-examples me-2"></i>
-                            Example Questions
+                            <i class="fas fa-lightbulb me-2"></i>
+                            Example Questions to Ask
                         </h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-primary">Financial Questions:</h6>
+                            <div class="col-md-4">
+                                <h6 class="text-primary">📊 Financial Questions:</h6>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What were the total revenues for Q3 2024?"</li>
-                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What is the company's current cash position?"</li>
-                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"How much was spent on R&D this quarter?"</li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="What were the total revenues for Q1 2025?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>What were the total revenues for Q1 2025?
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="What is the company's current cash position?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>What is the company's current cash position?
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="How much was spent on R&D this quarter?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>How much was spent on R&D this quarter?
+                                        </button>
+                                    </li>
                                 </ul>
                             </div>
-                            <div class="col-md-6">
-                                <h6 class="text-primary">Business Questions:</h6>
+                            <div class="col-md-4">
+                                <h6 class="text-success">🏢 Business Questions:</h6>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What are the main risk factors mentioned?"</li>
-                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What is this filing about?"</li>
-                                    <li><i class="fas fa-arrow-right text-muted me-2"></i>"What new acquisitions were made?"</li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="What are the main risk factors mentioned?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>What are the main risk factors mentioned?
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="What is this filing about?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>What is this filing about?
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="What new business initiatives were announced?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>What new business initiatives were announced?
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-warning">⚠️ Strategy Questions:</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="What is management's outlook for next year?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>What is management's outlook for next year?
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="How did this quarter compare to last year?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>How did this quarter compare to last year?
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button class="btn btn-link p-0 text-start example-question" data-question="What are the key challenges facing the company?">
+                                            <i class="fas fa-quote-left me-1 text-muted"></i>What are the key challenges facing the company?
+                                        </button>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -219,16 +312,29 @@
     <footer class="bg-dark text-light mt-5 py-4">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <h6>AI SEC Filing Analyzer</h6>
                     <p><small>Demonstrating Generative AI skills for Junior Developer positions</small></p>
                 </div>
-                <div class="col-md-6 text-end">
+                <div class="col-md-4">
+                    <h6>Created By:</h6>
+                    <p><small>
+                        <i class="fas fa-user me-1"></i> <strong>Martin Kitukov</strong><br>
+                        <a href="https://www.linkedin.com/in/martin-kitukov-b205381b0/" target="_blank" class="text-light text-decoration-none">
+                            <i class="fab fa-linkedin me-1"></i> LinkedIn Profile
+                        </a><br>
+                        <a href="mailto:martin.kitukov@gmail.com" class="text-light text-decoration-none">
+                            <i class="fas fa-envelope me-1"></i> martin.kitukov@gmail.com
+                        </a>
+                    </small></p>
+                </div>
+                <div class="col-md-4 text-end">
                     <h6>Powered By:</h6>
                     <p><small>
                         <i class="fas fa-brain me-1"></i> Google Gemini LLM<br>
                         <i class="fas fa-vector-square me-1"></i> Hugging Face Embeddings<br>
-                        <i class="fas fa-server me-1"></i> FastAPI Backend
+                        <i class="fas fa-server me-1"></i> FastAPI Backend<br>
+                        <i class="fas fa-database me-1"></i> ChromaDB Vector Store
                     </small></p>
                 </div>
             </div>
