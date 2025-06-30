@@ -1,0 +1,53 @@
+services:
+  sec-analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sec-analyzer-demo
+    ports:
+      - "8000:8000"
+    env_file:
+      - backend/.env
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - ALLOWED_ORIGINS=*
+      - VECTOR_DB_PATH=/tmp/chroma_db
+      - CHUNK_SIZE=1000
+      - CHUNK_OVERLAP=200
+      - MAX_CHUNKS=100
+      - REQUEST_TIMEOUT=180
+      - GEMINI_MODEL=gemini-2.5-flash
+      - HF_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
+    networks:
+      - demo-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  nginx:
+    image: nginx:alpine
+    container_name: sec-analyzer-nginx-demo
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.demo.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - demo-network
+    depends_on:
+      - sec-analyzer
+    restart: unless-stopped
+
+networks:
+  demo-network:
+    driver: bridge 
