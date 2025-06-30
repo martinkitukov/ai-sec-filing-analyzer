@@ -1,224 +1,238 @@
 # AI SEC Filing Analyzer
 
-A full-stack web application that demonstrates Generative AI capabilities for analyzing SEC filings, built to showcase skills for Junior Generative AI Developer positions.
+A full-stack web application that demonstrates **Generative AI capabilities** for analyzing SEC filings using natural language queries. Built to showcase skills for Junior Generative AI Developer positions with **enterprise-grade architecture** and **production-ready deployment**.
 
-## 🚀 **Try It Now**
+## 🚀 **Quick Demo**
 
-**Need SEC filing URLs?** Visit the official SEC EDGAR database:
-👉 **https://www.sec.gov/search-filings**
+**Try it in 2 minutes:**
+```bash
+# 1. Set your Google AI API key (get free at https://aistudio.google.com/)
+export GOOGLE_API_KEY="your-api-key-here"  # Linux/Mac
+set GOOGLE_API_KEY=your-api-key-here       # Windows
 
-**Quick Start:**
-1. Search for any public company (e.g., "Apple", "Microsoft", "Tesla")
-2. Find a recent 10-K, 10-Q, or 8-K filing
-3. Copy the filing URL 
-4. Paste it into this application with your question!
+# 2. Run the optimized demo
+./demo.sh      # Linux/Mac
+demo.bat       # Windows
 
-**💡 Pro Tips:**
-- **10-K**: Annual reports (great for comprehensive analysis)
-- **10-Q**: Quarterly reports (perfect for recent financial data)
-- **8-K**: Current reports (ideal for specific events/announcements)
+# 3. Open http://localhost and paste any SEC filing URL!
+```
 
-## 🎯 Purpose
+**Need SEC filing URLs?** → https://www.sec.gov/search-filings (search for Apple, Tesla, Microsoft, etc.)
 
-This application demonstrates proficiency in key technologies and concepts relevant to Generative AI development:
+## 🎯 **What It Does**
 
-- **LLM Integration**: Using Large Language Models for document analysis and question answering
-- **Vector Embeddings**: Converting SEC filings into searchable vector representations
-- **Prompt Engineering**: Crafting effective prompts for financial document analysis
-- **REST API Development**: Building scalable backend services with FastAPI
-- **Full-Stack Development**: JavaScript frontend with Python backend integration
-- **SOLID Principles**: Clean, maintainable, and extensible code architecture
+Transform hours of manual SEC filing analysis into **seconds of AI-powered insights**:
 
-## 🚀 Features
+- **Input**: SEC filing URL + natural language question
+- **Output**: Accurate, sourced analysis with confidence scores
+- **Example**: *"What were Tesla's Q1 2025 revenues?"* → *"$12,925 million in automotive sales, down from $16,460 million in Q1 2024"*
 
-- **SEC Filing Analysis**: Input SEC filing URLs for AI-powered analysis
-- **Natural Language Queries**: Ask questions about filings in plain English
-- **Intelligent Responses**: Get detailed, contextual answers about financial data
-- **Vector Search**: Efficient document retrieval using embedding-based search
-- **Modern UI**: Clean, responsive frontend built with JavaScript
-- **FastAPI Backend**: High-performance Python backend with automatic API documentation
+### **Real-World Value**
+- **90% Time Reduction**: Analysis that took hours now takes minutes
+- **Enhanced Accuracy**: AI reduces human oversight in complex financial data
+- **Natural Interface**: Plain English questions instead of complex search queries
+- **Source Attribution**: Every answer links to specific document sections
 
-## 🛠 Tech Stack
+## 🛠 **Tech Stack & Architecture**
 
-### Backend
-- **Python 3.9+**: Core backend language
-- **FastAPI**: Modern, fast web framework for building APIs
-- **LangChain**: Framework for developing LLM-powered applications
-- **Google Gemini**: Large Language Model for text analysis (free tier)
-- **Hugging Face Transformers**: Open-source embeddings and models
-- **ChromaDB**: Vector database for embeddings storage (no SQL database needed)
-- **Requests**: HTTP library for SEC filing retrieval
-- **Pydantic**: Data validation and serialization
-
-### Frontend
-- **Vanilla JavaScript**: Pure JS for frontend interactivity
-- **HTML5/CSS3**: Modern web standards
-- **Bootstrap**: Responsive UI components
-- **Fetch API**: For backend communication
-
-### AI/ML Components
+### **AI/ML Components**
 - **Google Gemini API**: Advanced text analysis and question answering
-- **Hugging Face Embeddings**: Free, high-quality text-to-vector conversion
-- **Vector Similarity Search**: Document retrieval and ranking
-- **Prompt Engineering**: Optimized prompts for financial analysis
-- **Document Processing**: SEC filing parsing and chunking
+- **Hugging Face Transformers**: Open-source embeddings (`sentence-transformers/all-MiniLM-L6-v2`)
+- **ChromaDB**: Vector database for semantic search (no SQL database needed)
+- **LangChain**: RAG pipeline framework for document processing
 
-## 📋 Example Use Cases
+### **Backend & Frontend**
+- **FastAPI**: High-performance Python API with automatic documentation
+- **Vanilla JavaScript**: Pure frontend with Bootstrap UI
+- **Pydantic**: Data validation and serialization
+- **Uvicorn**: ASGI server for production deployment
 
-1. **Earnings Analysis**: 
-   - Input: SEC 8-K filing URL + "What were the Q3 2024 earnings?"
-   - Output: "Q3 2024 earnings were $1,231,231 with a 15% increase from previous quarter..."
-
-2. **Filing Summary**:
-   - Input: SEC 10-K filing URL + "What is this filing about?"
-   - Output: "This is a 10-K annual report covering: • Financial performance • Risk factors • Management discussion..."
-
-3. **Financial Metrics**:
-   - Input: Any SEC filing + "What are the key financial metrics?"
-   - Output: Detailed breakdown of revenue, profit margins, cash flow, etc.
-
-## 🏗 Architecture
-
-### RAG Pipeline Workflow
-
-```mermaid
-graph TD
-    A["User Uploads Text"] --> B["LangChain splits"]
-    B --> C["Hugging Face embeds"]
-    C --> D["ChromaDB stores"]
-    
-    E["User Question"] --> F["Embed (HF)"]
-    F --> G["Chroma Similarity Search"]
-    G --> H["Top Chunks"]
-    
-    I["Context + Question"] --> J["Gemini"]
-    J --> K["Final Answer"]
-    
-    D -.-> G
-    H --> I
+### **RAG Pipeline Architecture**
+```
+User Input → Document Processing → Text Chunking → Embeddings → Vector Storage
+     ↓
+Question → Query Embedding → Similarity Search → Context Retrieval → AI Analysis → Response
 ```
 
-### Project Structure
+## 📋 **Setup Options**
 
-The application follows SOLID principles and clean architecture patterns:
+Choose your preferred setup method:
 
-```
-├── backend/
-│   ├── app/
-│   │   ├── api/          # FastAPI route handlers
-│   │   ├── core/         # Configuration and settings
-│   │   ├── models/       # Pydantic data models
-│   │   ├── services/     # Business logic layer
-│   │   └── utils/        # Utility functions
-│   ├── chroma_db/        # Vector database storage (no SQL needed)
-│   ├── main.py           # FastAPI application entry point
-│   └── requirements.txt  # Python dependencies
-├── frontend/
-│   ├── assets/           # Static assets (CSS, JS)
-│   ├── components/       # Reusable UI components
-│   └── index.html        # Main application page
-└── docs/                 # Additional documentation
-```
+| Method | Use Case | Setup Time | Resource Usage |
+|--------|----------|------------|----------------|
+| **🐳 Docker Demo** | Interviews, Quick Testing | 2 minutes | 2GB RAM |
+| **🐳 Docker Dev** | Full Development | 5 minutes | 4GB RAM |
+| **🐍 Virtual Environment** | Python Development | 10 minutes | 2GB RAM |
 
-### Data Architecture
+---
 
-- **No SQL Database**: ChromaDB handles all data storage needs
-- **Vector-First**: Document chunks stored as 384-dimensional embeddings
-- **Metadata Storage**: JSON-like metadata stored alongside vectors
-- **In-Memory Processing**: Document processing happens entirely in memory
-- **Persistent Vectors**: ChromaDB provides local persistence without complex database setup
+## 🐳 **Option 1: Docker Setup (Recommended)**
 
-### How the RAG Pipeline Works
+### **🚀 Quick Demo (Interview Ready)**
 
-1. **Document Ingestion**: User provides SEC filing URL
-2. **Content Extraction**: Multi-format processor fetches and cleans document
-3. **Text Chunking**: LangChain splits document into 1000-character chunks with 200-char overlap
-4. **Embedding Generation**: Hugging Face Sentence Transformers convert chunks to 384-dim vectors
-5. **Vector Storage**: ChromaDB stores embeddings with metadata (no SQL database needed)
-6. **Query Processing**: User question gets embedded using same Hugging Face model
-7. **Similarity Search**: ChromaDB finds top 8 most relevant document chunks
-8. **Context Assembly**: Retrieved chunks become context for the AI prompt
-9. **AI Analysis**: Google Gemini analyzes context and generates accurate answer
-10. **Response Delivery**: User receives answer with confidence score and metadata
-
-## 🔧 Installation & Setup
-
-### Prerequisites
-- Python 3.9+
-- Node.js (for frontend development)
+**Prerequisites:**
+- Docker Desktop running
 - Google AI Studio API key (free at https://aistudio.google.com/)
 
-### Backend Setup
+**Setup:**
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# 1. Clone repository
+git clone <your-repo-url>
+cd ai-sec-filing-analyzer
 
-# Install dependencies
+# 2. Set API key (choose your OS)
+export GOOGLE_API_KEY="your-api-key-here"  # Linux/Mac
+set GOOGLE_API_KEY=your-api-key-here       # Windows
+
+# 3. Run optimized demo
+./demo.sh      # Linux/Mac
+demo.bat       # Windows
+```
+
+**Access Points:**
+- **Frontend**: http://localhost
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+
+**Demo Features:**
+- ✅ **68% smaller images** (optimized multi-stage builds)
+- ✅ **Resource limited** (2GB RAM, 1 CPU core)
+- ✅ **Ephemeral storage** (no data accumulation)
+- ✅ **Fast startup** (~30 seconds)
+
+### **🛠️ Full Development Environment**
+
+For active development with hot-reload:
+
+```bash
+# Development with hot-reload and debugging
+docker-compose up --build
+
+# Access points:
+# Frontend: http://localhost:3000
+# Backend: http://localhost:8000
+# Logs: docker-compose logs -f
+```
+
+### **🏭 Production Environment**
+
+Production-ready with SSL, security headers, and optimization:
+
+```bash
+# Production setup with nginx reverse proxy
+docker-compose -f docker-compose.prod.yml up --build -d
+
+# Access: http://localhost (nginx handles routing)
+```
+
+### **Docker Environment Comparison**
+
+| Environment | File | Purpose | Features |
+|-------------|------|---------|----------|
+| **Demo** | `docker-compose.demo.yml` | Interview/Testing | • Fast startup<br>• Resource limited<br>• Ephemeral storage |
+| **Development** | `docker-compose.yml` | Active coding | • Hot-reload<br>• Debug tools<br>• Persistent data |
+| **Production** | `docker-compose.prod.yml` | Deployment | • SSL/HTTPS<br>• Security headers<br>• Rate limiting |
+
+---
+
+## 🐍 **Option 2: Virtual Environment Setup**
+
+For Python developers who prefer traditional virtual environment setup:
+
+### **Prerequisites**
+- Python 3.9+ installed
+- Git installed
+- Google AI Studio API key
+
+### **Backend Setup**
+```bash
+# 1. Clone and navigate
+git clone <your-repo-url>
+cd ai-sec-filing-analyzer
+
+# 2. Create and activate virtual environment
+python -m venv venv
+
+# Activate (choose your OS):
+source venv/bin/activate        # Linux/Mac
+venv\Scripts\activate          # Windows
+
+# 3. Install dependencies
 cd backend
 pip install -r requirements.txt
 
-# Set environment variables
-export GOOGLE_API_KEY="your-google-ai-key-here"  # On Windows: set GOOGLE_API_KEY=your-key
+# 4. Set up environment variables
+cp env.example .env
+# Edit .env file and add your GOOGLE_API_KEY
 
-# Run the application
+# 5. Run the backend server
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**🚀 First Run:** The application will automatically:
-- Create the `chroma_db/` directory and vector database files
-- Download the Hugging Face embedding model (~90MB)
-- Initialize all AI components
-
-**⚡ Subsequent Runs:** Everything loads faster as models and database are cached locally.
-
-### Frontend Setup
+### **Frontend Setup**
 ```bash
+# Open new terminal
 cd frontend
-# Serve with any HTTP server, e.g.:
+
+# Serve with any HTTP server:
 python -m http.server 3000
-# or
-npx serve .
+# OR
+npx serve . -p 3000
+# OR
+php -S localhost:3000  # If you have PHP
 ```
+
+### **Virtual Environment Access Points**
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+
+### **Development Workflow**
+```bash
+# Backend (in backend/ directory)
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# Frontend (in frontend/ directory)  
+python -m http.server 3000
+
+# First run initialization:
+# - ChromaDB creates database files automatically
+# - Hugging Face downloads embedding model (~90MB)
+# - Subsequent runs are faster with cached models
+```
+
+---
 
 ## 📖 **How to Use the Application**
 
-### Step 1: Find a SEC Filing
-1. **Go to SEC EDGAR**: https://www.sec.gov/search-filings
-2. **Search** for any public company (Apple, Tesla, Microsoft, etc.)
-3. **Filter** by filing type:
+### **Step 1: Find a SEC Filing**
+1. Visit **SEC EDGAR**: https://www.sec.gov/search-filings
+2. Search for any public company (Apple, Tesla, Microsoft, etc.)
+3. Filter by filing type:
    - **10-K**: Annual comprehensive reports
    - **10-Q**: Quarterly financial reports  
    - **8-K**: Current event reports
-4. **Click** on any recent filing
-5. **Copy** the URL from your browser
+4. Copy the filing URL from your browser
 
-### Step 2: Analyze with AI
-1. **Open** the application at `http://localhost:3000`
-2. **Paste** the SEC filing URL into the input field
-3. **Ask** your question in plain English:
+### **Step 2: Analyze with AI**
+1. Open the application (http://localhost or http://localhost:3000)
+2. Paste the SEC filing URL
+3. Ask your question in plain English:
    - *"What were the total revenues for Q3 2024?"*
    - *"What are the main risk factors?"*
    - *"How much cash does the company have?"*
    - *"What is the company's outlook for next year?"*
-4. **Submit** and get intelligent analysis in seconds!
+4. Get intelligent analysis in ~30 seconds!
 
-### Step 3: Explore the Results
-- **AI Analysis**: Get detailed, sourced answers
-- **Confidence Score**: See how confident the AI is
-- **Source Attribution**: Know exactly where information came from
-- **Filing Metadata**: Company name, filing type, and dates
+### **Step 3: Explore Results**
+- **AI Analysis**: Detailed, contextual answers
+- **Confidence Score**: AI confidence level (0.0-1.0)
+- **Source Attribution**: Exact document sections referenced
+- **Filing Metadata**: Company name, filing type, processing stats
 
-### 🎯 **Best Questions to Ask**
-- **Financial Metrics**: *"What were the revenues, profits, and cash flow?"*
-- **Risk Analysis**: *"What risks does management identify?"*  
-- **Strategy**: *"What is the company's strategy for growth?"*
-- **Recent Changes**: *"What major events happened this quarter?"*
-- **Comparisons**: *"How did this quarter compare to last year?"*
+### **💡 Complete Workflow Example**
 
-### 💡 **Example Workflow**
-
-Here is a complete walkthrough from finding a filing on SEC.gov to getting an AI-powered analysis.
+Here is a complete walkthrough from finding a filing on SEC.gov to getting an AI-powered analysis:
 
 **Step 1: Search for a company on the SEC EDGAR database.**
 *Navigate to https://www.sec.gov/search-filings and search for a public company.*
@@ -244,112 +258,246 @@ Here is a complete walkthrough from finding a filing on SEC.gov to getting an AI
 *The system will process the document and provide a detailed, contextual answer to your question.*
 ![Step 6: Get an AI response](docs/screenshots/ai-response.png)
 
-## 🎯 Why Vector-First Architecture?
+---
 
-This application demonstrates modern AI-first architecture principles:
+## 🌐 **API Documentation**
 
-- **No SQL Complexity**: Eliminates need for database schemas, migrations, and ORM layers
-- **AI-Native Storage**: ChromaDB is purpose-built for machine learning workloads
-- **Faster Development**: No database design phase - focus purely on AI functionality
-- **Better Performance**: Vector similarity search is faster than SQL joins for this use case
-- **Simpler Deployment**: One less system to configure and maintain
-- **Modern Best Practices**: Follows current trends in AI/ML application architecture
-
-## 📚 Skills Demonstrated
-
-This project showcases the following skills relevant to Generative AI development:
-
-### Core AI/ML Skills
-- [x] **LLM Integration**: Google Gemini integration for text analysis
-- [x] **Embeddings**: Hugging Face embeddings for semantic search
-- [x] **Prompt Engineering**: Optimized prompts for financial analysis
-- [x] **Vector Stores**: Chroma vector database implementation
-- [x] **Document Processing**: SEC filing parsing and chunking
-- [x] **Open Source AI**: Hugging Face transformers ecosystem
-
-### Software Development
-- [x] **Python Proficiency**: Clean, well-structured Python code
-- [x] **JavaScript Skills**: Modern frontend development
-- [x] **REST APIs**: FastAPI backend with proper HTTP methods
-- [x] **OOP Principles**: Object-oriented design patterns
-- [x] **SOLID Principles**: Single responsibility, dependency injection, etc.
-- [x] **Version Control**: Git workflow and best practices
-
-### Gen-AI Frameworks
-- [x] **LangChain**: Document loaders, text splitters, vector stores
-- [x] **Google Gemini API**: Advanced language model capabilities
-- [x] **Hugging Face**: Open-source transformer models and embeddings
-- [x] **ChromaDB**: Vector database for similarity search and retrieval
-
-### Data & APIs
-- [x] **HTTP APIs**: RESTful service design
-- [x] **Data Validation**: Pydantic models for type safety
-- [x] **Error Handling**: Robust error handling and logging
-- [x] **Documentation**: Automatic API documentation with FastAPI
-- [x] **Vector-First Architecture**: No SQL database complexity, pure vector storage
-
-## 🚀 Future Enhancements
-
-### Planned Features
-- [ ] **Docker Containerization**: Full containerization with Docker Compose
-- [ ] **Azure Deployment**: Cloud deployment on Azure Container Instances
-- [ ] **Azure Cognitive Services**: Integration with Azure OpenAI Service
-- [ ] **CI/CD Pipeline**: GitHub Actions for automated deployment
-- [ ] **Enhanced Vector Storage**: Distributed ChromaDB or Pinecone for scale
-- [ ] **Authentication**: User management and API key handling
-- [ ] **Caching**: Redis for improved performance
-- [ ] **Monitoring**: Application insights and logging
-
-### Advanced AI Features
-- [ ] **Multi-Model Support**: Integration with various LLM providers
-- [ ] **RAG Pipeline**: Advanced Retrieval-Augmented Generation
-- [ ] **Fine-tuning**: Custom models for financial analysis
-- [ ] **Streaming Responses**: Real-time response streaming
-- [ ] **Multi-document Analysis**: Compare multiple filings
-
-## 📄 API Documentation
-
-Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation powered by FastAPI's automatic OpenAPI generation.
-
-### 🎯 **API Design**
-
-This project implements **modern RESTful API design principles**:
-
-#### **Core API Endpoints**
-```
+### **Core Endpoints**
+```bash
 POST   /api/v1/analyses           # Create new SEC filing analysis
-GET    /api/v1/analyses           # List all analyses (with pagination)
-GET    /api/v1/analyses/{id}      # Get specific analysis by ID
-GET    /api/v1/system/status      # Comprehensive system health check
-GET    /api/v1/filings/types      # List supported SEC filing types
-GET    /api/v1/examples/queries   # Example questions and usage patterns
+GET    /api/v1/analyses/{id}      # Get specific analysis
+GET    /api/v1/system/status      # System health check
+GET    /api/v1/examples/queries   # Example questions
 ```
 
-#### **REST Design Principles Demonstrated**
-- **Resource-Oriented**: URLs represent resources, not actions
-- **HTTP Status Codes**: 201 for creation, 404 for not found, etc.
-- **Proper HTTP Methods**: POST for creation, GET for retrieval, DELETE for removal
-- **Consistent Response Format**: All endpoints follow the same error/success patterns
-- **API Documentation**: Auto-generated OpenAPI/Swagger documentation
+### **Example API Usage**
+```bash
+# Health check
+curl http://localhost:8000/health
 
-### 🗂️ **Data Storage Architecture**
+# Analyze a filing
+curl -X POST http://localhost:8000/api/v1/analyses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filing_url": "https://www.sec.gov/ix?doc=/Archives/edgar/data/0001318605/000162828025018911/tsla-20250331.htm",
+    "question": "What were the key financial metrics for Q1 2025?"
+  }'
+```
 
-**ChromaDB (Vector Database):**
-- ✅ Document chunks and embeddings are persisted
-- ✅ Automatically created when first used (not in Git)
-- ✅ Each user builds their own clean database
+**Interactive API Documentation**: http://localhost:8000/docs (automatic FastAPI/Swagger docs)
 
-**Analysis Records:**
-- ⚠️ **Demo Mode**: Analysis IDs exist only in API responses (not persisted)
-- 🏭 **Production**: Would require PostgreSQL/MongoDB for analysis history
-- 🎯 **Portfolio Focus**: Showcases AI/ML capabilities over CRUD operations
+---
 
+## ⚙️ **Environment Variables**
 
-## 📧 Contact
+### **Required Variables**
+```bash
+GOOGLE_API_KEY=your-google-ai-key-here    # Get free at https://aistudio.google.com/
+```
 
-email: martin.kitukov@gmail.com
+### **Optional Configuration**
+```bash
+# Environment settings
+ENVIRONMENT=production                     # development/production
+DEBUG=false                               # Enable debug logging
 
-linkedin: https://www.linkedin.com/in/martin-kitukov-b205381b0/
+# AI/ML settings
+GEMINI_MODEL=gemini-2.5-flash            # Google Gemini model
+HF_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2  # Hugging Face model
+CHUNK_SIZE=1000                          # Document chunk size
+CHUNK_OVERLAP=200                        # Chunk overlap for context
+MAX_CHUNKS=100                           # Maximum chunks per document
+
+# Performance settings
+REQUEST_TIMEOUT=180                      # API timeout (seconds)
+VECTOR_DB_PATH=/app/chroma_db           # ChromaDB storage path
+
+# CORS settings (for production)
+ALLOWED_ORIGINS=https://your-domain.com  # Comma-separated origins
+```
+
+---
+
+## 🚀 **Deployment Options**
+
+### **Local Testing**
+```bash
+# Quick demo
+./demo.sh
+
+# Development
+docker-compose up
+
+# Production test
+deploy.bat prod
+```
+
+### **Cloud Deployment**
+
+**Option 1: GitHub Actions (Automated)**
+- Push to GitHub → Automatically deploys to Azure
+- Uses `deploy/github-actions/deploy.yml`
+- Requires Azure credentials in GitHub secrets
+
+**Option 2: Manual Azure Deployment**
+```bash
+# Azure Container Instances
+az container create --file deploy/azure/container-instances.yml
+
+# Azure App Service
+az webapp create --file deploy/azure/app-service.yml
+```
+
+**Option 3: Other Cloud Providers**
+- The Docker images work on any cloud platform
+- AWS ECS, Google Cloud Run, DigitalOcean, etc.
+
+---
+
+## 📚 **Skills Demonstrated**
+
+This project showcases key skills for **Generative AI Developer** roles:
+
+### **AI/ML Skills**
+- ✅ **LLM Integration**: Google Gemini for complex text analysis
+- ✅ **Embeddings**: Hugging Face transformers for semantic search
+- ✅ **Vector Databases**: ChromaDB for similarity search
+- ✅ **RAG Pipeline**: Complete Retrieval-Augmented Generation implementation
+- ✅ **Prompt Engineering**: Optimized prompts for financial analysis
+
+### **Software Development**
+- ✅ **Python Proficiency**: Clean, well-structured FastAPI backend
+- ✅ **API Design**: RESTful services with automatic documentation
+- ✅ **Frontend Development**: Responsive JavaScript application
+- ✅ **SOLID Principles**: Modular, maintainable code architecture
+- ✅ **Error Handling**: Robust error handling and logging
+
+### **DevOps & Production**
+- ✅ **Docker Optimization**: Multi-stage builds, 68% size reduction
+- ✅ **Multiple Environments**: Development, demo, production configurations
+- ✅ **Cloud Deployment**: Azure Container Instances and App Service ready
+- ✅ **CI/CD Pipeline**: GitHub Actions for automated deployment
+- ✅ **Security**: Production-grade security headers and practices
+
+---
+
+## 🗂️ **Project Structure**
+
+```
+ai-sec-filing-analyzer/
+├── 📁 backend/                    # FastAPI application
+│   ├── app/
+│   │   ├── api/routes/           # API endpoints
+│   │   ├── core/                 # Configuration
+│   │   ├── models/               # Pydantic schemas
+│   │   ├── services/             # Business logic
+│   │   └── utils/                # Utilities
+│   ├── main.py                   # Application entry point
+│   └── requirements.txt          # Python dependencies
+├── 📁 frontend/                   # Vanilla JavaScript UI
+│   ├── assets/                   # CSS, JS files
+│   ├── components/               # UI components
+│   └── index.html                # Main page
+├── 📁 deploy/                     # Deployment configurations
+│   ├── azure/                    # Azure deployment files
+│   └── github-actions/           # CI/CD workflows
+├── 📁 docs/                       # Additional documentation
+│   ├── PROBLEM_STATEMENT.md      # Business context
+│   ├── BUSINESS_OVERVIEW.md      # Value proposition
+│   └── TECHNICAL_DEEP_DIVE.md    # Architecture details
+├── 🐳 docker-compose.yml          # Development environment
+├── 🐳 docker-compose.demo.yml     # Interview/demo environment
+├── 🐳 docker-compose.prod.yml     # Production environment
+├── 🐳 Dockerfile                  # Production image
+├── 🐳 Dockerfile.dev              # Development image
+├── 🌐 nginx.*.conf                # Nginx configurations
+├── 📜 demo.sh / demo.bat          # Quick demo scripts
+├── 📜 deploy.sh / deploy.bat      # Deployment scripts
+└── 📖 README.md                   # This file
+```
+
+---
+
+## 🔧 **Troubleshooting**
+
+### **Common Issues**
+
+**Port conflicts:**
+```bash
+# Check what's using ports 8000 or 3000
+netstat -tulpn | grep :8000  # Linux
+netstat -ano | findstr :8000  # Windows
+```
+
+**API key issues:**
+```bash
+# Verify API key is set
+echo $GOOGLE_API_KEY        # Linux/Mac
+echo %GOOGLE_API_KEY%       # Windows
+```
+
+**Docker memory issues:**
+```bash
+# Increase Docker memory limit in Docker Desktop settings
+# Or use demo config with lower resource requirements
+./demo.sh
+```
+
+**First run is slow:**
+- Hugging Face downloads ~90MB embedding model
+- ChromaDB initializes database files
+- Subsequent runs are much faster
+
+### **Debug Commands**
+```bash
+# Check container status
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# Access container shell
+docker-compose exec sec-analyzer bash
+
+# Clean up
+docker system prune -af --volumes
+```
+
+---
+
+## 📋 **Additional Documentation**
+
+For deeper understanding:
+
+- **[Problem Statement](docs/PROBLEM_STATEMENT.md)**: Business context and challenges
+- **[Business Overview](docs/BUSINESS_OVERVIEW.md)**: Value proposition and use cases  
+- **[Technical Deep Dive](docs/TECHNICAL_DEEP_DIVE.md)**: Architecture and implementation details
+- **[Docker Optimization Guide](DOCKER_OPTIMIZATION.md)**: Performance optimization details
+
+---
+
+## 🎯 **Why Vector-First Architecture?**
+
+This application demonstrates modern **AI-first architecture** principles:
+
+- **No SQL Complexity**: ChromaDB eliminates database schemas and migrations
+- **AI-Native Storage**: Purpose-built for machine learning workloads
+- **Faster Development**: Focus on AI functionality, not database design
+- **Better Performance**: Vector similarity search outperforms SQL joins for this use case
+- **Simpler Deployment**: One less system to configure and maintain
+
+---
+
+## 📄 **License**
+
+This project is available under the MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## 📧 **Contact**
+
+**Email**: martin.kitukov@gmail.com  
+**LinkedIn**: https://www.linkedin.com/in/martin-kitukov-b205381b0/
 
 ---
 
